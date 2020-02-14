@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Book from "./Book";
 import * as BooksAPI from "./BooksAPI";
-import { isArray } from "util";
+import { DebounceInput } from "react-debounce-input";
 
 export default class extends Component {
   state = {
@@ -22,17 +22,23 @@ export default class extends Component {
   inputChangeHandler = event => {
     const { value } = event.target;
     this.setState({ input: value }, () => {
-      BooksAPI.search(this.state.input).then(res => {
-        this.changeBooksOptionsToCurrentShelfs(res);
+      if (this.state.input !== "") {
+        BooksAPI.search(this.state.input).then(res => {
+          this.changeBooksOptionsToCurrentShelfs(res);
+          this.setState(() => ({
+            searchedBooks: res
+          }));
+        });
+      } else {
         this.setState(() => ({
-          searchedBooks: res
+          searchedBooks: []
         }));
-      });
+      }
     });
   };
 
   changeBooksOptionsToCurrentShelfs = books => {
-    if (isArray(books) && books.length > 0 && this.state.myBooks.length > 0) {
+    if (Array.isArray(books) && books.length > 0 && this.state.myBooks.length > 0) {
       for (let book of books) {
         for (let myBook of this.state.myBooks) {
           if (book.id === myBook.id) {
@@ -48,10 +54,8 @@ export default class extends Component {
   };
   render() {
     const { searchedBooks } = this.state;
-    console.log(searchedBooks);
-
     let result;
-    if (!isArray(searchedBooks) || searchedBooks.length === 0) {
+    if (!Array.isArray(searchedBooks) || searchedBooks.length === 0) {
       result = <h1>No Results</h1>;
     } else {
       result = (
@@ -74,12 +78,10 @@ export default class extends Component {
           <Link className="close-search" to="/">
             Close
           </Link>
-
           <div className="search-books-input-wrapper">
-            <input
-              type="text"
-              placeholder="Search by title or author"
-              value={this.state.input}
+            <DebounceInput
+              minLength={0}
+              debounceTimeout={300}
               onChange={this.inputChangeHandler}
             />
           </div>

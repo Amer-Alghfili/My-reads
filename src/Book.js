@@ -22,14 +22,22 @@ export default props => {
         <div className="book-top">
           <div
             className="book-cover"
-            style={noImageStyle}
+            style={{
+              width: 128,
+              height: 193,
+              backgroundImage: `url(${
+                book.imageLinks && book.imageLinks.thumbnail
+                  ? `${book.imageLinks.thumbnail}`
+                  : `http://via.placeholder.com/128x193?text=No%20Cover`
+              })`
+            }}
           ></div>
           <div className="book-shelf-changer">
             <Options book={book} optionChange={optionChange} />
           </div>
         </div>
         <div className="book-title">{book.title}</div>
-        <div className="book-authors">{book.authors}</div>
+        <div className="book-authors">{Array.isArray(book.authors)?book.authors.join(', '):''}</div>
       </div>
     </li>
   );

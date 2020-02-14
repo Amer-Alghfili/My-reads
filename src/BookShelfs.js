@@ -42,18 +42,18 @@ export default class extends Component {
 
   shelfChangeHandler = async (book, shelf) => {
     await BooksAPI.update(book, shelf);
-    if (shelf !== "none") {
-      this.moveBook(book, book.shelf, shelf);
-    }
+    this.moveBook(book, book.shelf, shelf);
   };
 
   moveBook = (book, prevShelf, nextShelf) => {
     const booksShelfs = { ...this.state.booksShelfs };
     booksShelfs[prevShelf] = booksShelfs[prevShelf].filter(
-      shelfBook => shelfBook.title !== book.title
+      shelfBook => shelfBook.id !== book.id
     );
     book.shelf = nextShelf;
-    booksShelfs[nextShelf].push(book);
+    if (nextShelf !== "none") {
+      booksShelfs[nextShelf].push(book);
+    }
     this.setState(() => ({ booksShelfs }));
   };
 
