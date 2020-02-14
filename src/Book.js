@@ -3,19 +3,6 @@ import Options from "./Options";
 
 export default props => {
   const { book, optionChange } = props;
-  let noImageStyle;
-  if (!book.imageLinks) {
-    noImageStyle = {
-      width: 128,
-      height: 193
-    };
-  } else {
-    noImageStyle = {
-      width: 128,
-      height: 193,
-      backgroundImage: `url(${book.imageLinks.smallThumbnail})`
-    };
-  }
   return (
     <li>
       <div className="book">
@@ -37,7 +24,9 @@ export default props => {
           </div>
         </div>
         <div className="book-title">{book.title}</div>
-        <div className="book-authors">{Array.isArray(book.authors)?book.authors.join(', '):''}</div>
+        <div className="book-authors">
+          {Array.isArray(book.authors) ? book.authors.join(", ") : ""}
+        </div>
       </div>
     </li>
   );
